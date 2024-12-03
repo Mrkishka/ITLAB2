@@ -10,13 +10,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderTransactions(transactions) {
         transactionList.innerHTML = "";
-        transactions.forEach((entry) => {
+        transactions.forEach((entry, index) => {
             const listItem = document.createElement("li");
             listItem.classList.add("list-group-item");
             listItem.textContent = `${entry.amount} ${entry.valuta.name} - ${entry.type.name} - ${entry.date}`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm", "ms-3");
+            deleteButton.textContent = "Удалить";
+            deleteButton.addEventListener("click", () => handleDeleteTransaction(entry, index));
+
+            listItem.appendChild(deleteButton);
             transactionList.appendChild(listItem);
         });
     }
+
+    function handleDeleteTransaction(entry, index) {
+        if (entry instanceof Income) {
+            myBudget.removeIncome(index);
+        } else if (entry instanceof Expense) {
+            myBudget.removeExpense(index);
+        }
+
+        renderTransactions(myBudget.incomes.concat(myBudget.expenses));
+        updateBalance();
+    }
+
     function updateBalance() {
         const startDate = filterDateStart.value;
         const endDate = filterDateEnd.value;
@@ -49,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBalance();
         addRecordForm.reset();
     });
-
     applyFilterButton.addEventListener("click", () => {
         const type = filterType.value;
         const customTypeName = filterCustomType.value.toLowerCase();
