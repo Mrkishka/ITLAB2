@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterDateStart = document.getElementById("filterDateStart");
     const filterDateEnd = document.getElementById("filterDateEnd");
     const addRecordForm = document.getElementById("addRecordForm");
+    const balanceDisplay = document.getElementById("balance");
+    const applyFilterButton = document.getElementById("applyFilter");
 
     function renderTransactions(transactions) {
         transactionList.innerHTML = "";
@@ -14,6 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
             listItem.textContent = `${entry.amount} ${entry.valuta.name} - ${entry.type.name} - ${entry.date}`;
             transactionList.appendChild(listItem);
         });
+    }
+    function updateBalance() {
+        const startDate = filterDateStart.value;
+        const endDate = filterDateEnd.value;
+        const balanceText = myBudget.calculateBalance(startDate, endDate);
+
+        balanceDisplay.textContent = balanceText;
     }
 
     addRecordForm.addEventListener("submit", (e) => {
@@ -37,10 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         renderTransactions(myBudget.incomes.concat(myBudget.expenses));
+        updateBalance();
         addRecordForm.reset();
     });
 
-    document.getElementById("applyFilter").addEventListener("click", () => {
+    applyFilterButton.addEventListener("click", () => {
         const type = filterType.value;
         const customTypeName = filterCustomType.value.toLowerCase();
         const startDate = filterDateStart.value;
@@ -54,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         renderTransactions(filtered);
+        updateBalance();
     });
-
-    renderTransactions(myBudget.incomes.concat(myBudget.expenses));
+    updateBalance();
 });

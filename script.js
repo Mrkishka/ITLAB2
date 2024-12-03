@@ -147,14 +147,17 @@ class Budget {
             expenseByCurrency[currency] += expense.amount;
         });
 
-        console.log(`Баланс за период${startDate && endDate ? ` с ${startDate} по ${endDate}` : ""}:`);
+        let balanceOutput = `Деняги${startDate && endDate ? ` с ${startDate} по ${endDate}` : ""}:\n`;
         Object.keys(incomeByCurrency).forEach(currency => {
             const totalIncome = incomeByCurrency[currency] || 0;
             const totalExpense = expenseByCurrency[currency] || 0;
             const balance = totalIncome - totalExpense;
-            console.log(`Баланс в ${currency}: ${balance.toFixed(2)} ${currency}`);
+            balanceOutput += ` стока ${currency}: ${balance.toFixed(2)} ${currency}\n`;
         });
+
+        return balanceOutput;
     }
+
 
     filterTransactions(startDate, endDate, typeFilter = null, isIncome = true) {
         const transactions = isIncome ? this.incomes : this.expenses;
